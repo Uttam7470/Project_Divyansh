@@ -126,42 +126,45 @@ import { useState } from "react";
 
 function App() {
   const [url, setUrl] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const openAndRefresh = () => {
+  const startRefresh = () => {
     if (!url) return;
 
-    // new tab open
-    const newWindow = window.open(url, "_blank");
-
-    // refresh every 5 seconds
-    const interval = setInterval(() => {
-      if (newWindow && !newWindow.closed) {
-        newWindow.location.reload();
-      } else {
-        clearInterval(interval);
-      }
-    }, 5000); // 5 sec
+    setInterval(() => {
+      setRefreshKey((prev) => prev + 1);
+    }, 5000);
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
+    <div style={{ textAlign: "center" }}>
       <h1>Auto Refresh Link 🔄</h1>
 
       <input
         type="text"
-        placeholder="Enter URL (https://...)"
+        placeholder="Enter URL"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        style={{
-          padding: "10px",
-          width: "300px",
-          marginRight: "10px",
-        }}
+        style={{ padding: "10px", width: "300px" }}
       />
 
-      <button onClick={openAndRefresh} style={{ padding: "10px 20px" }}>
-        Open & Refresh
+      <br /><br />
+
+      <button onClick={startRefresh}>
+        Start Auto Refresh
       </button>
+
+      <div style={{ marginTop: "20px" }}>
+        {url && (
+          <iframe
+            key={refreshKey}
+            src={url}
+            width="800"
+            height="500"
+            title="preview"
+          />
+        )}
+      </div>
     </div>
   );
 }
